@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>礼物记录</title>
+</head>
+<style type="text/css">
+table {
+border-collapse: collapse;
+margin: 0 auto;
+text-align: center;
+}
+
+table td, table th {
+border: 1px solid #cad9ea;
+color: #666;
+height: 30px;
+}
+
+table thead th {
+background-color: #CCE8EB;
+width: 300px;
+}
+
+table tr:nth-child(odd) {
+background: #fff;
+}
+
+table tr:nth-child(even) {
+background: #F5FAFA;
+}
+
+a {
+    text-decoration:none;
+    color: #2916ff;
+    padding-top:5px;
+    padding-bottom:9px;
+    }
+a:hover {
+        color: #ff002b;
+        text-decoration:none;
+    }
+a:visited{
+        text-decoration:none;
+    }
+img{
+	width: auto;
+	height:100%;
+}
+</style>
+
+<script>
+function GetRequest(value) {
+  var url = decodeURI(location.search);
+  var object = {};
+  if(url.indexOf("?") != -1)
+  {
+   var str = url.substr(1);
+   var strs = str.split("&");
+   for(var i = 0; i < strs.length; i ++)
+    {
+　　　　　　　　object[strs[i].split("=")[0]]=strs[i].split("=")[1]
+　　　　　　}
+　　}
+  return object[value];
+}
+function goPage(){
+    var totalPage = 0;
+    var currentPage = 1;//当前页数
+    var hostname = location.hostname;
+    var port = location.port;
+    var url = hostname+':'+port;
+    var uid = GetRequest("uid");
+    totalPage = {{ totalpage }};
+    currentPage = {{ currentpage }};
+    var tempStr = "共"+"{{ length }}"+"条记录 分"+totalPage+"页 当前第"+currentPage+"页 ";
+    if(currentPage>1){
+        tempStr += `&nbsp;&nbsp;&nbsp;<a href=\"http://${url}/dyapi/query_log?uid=${uid}\" >首页</a>`;
+        tempStr += `&nbsp;&nbsp;&nbsp;<a href=\"http://${url}/dyapi/query_log?uid=${uid}&currentpage={{ currentpage - 1 }}\" ><上一页</a>`;
+    }else{
+        tempStr += "&nbsp;&nbsp;&nbsp;首页";
+        tempStr += "&nbsp;&nbsp;&nbsp;<上一页";
+    }
+    if(currentPage<totalPage){
+        tempStr += `&nbsp;&nbsp;&nbsp;<a href=\"http://${url}/dyapi/query_log?uid=${uid}&currentpage={{ currentpage + 1 }}\" >下一页></a>`;
+        tempStr += `&nbsp;&nbsp;&nbsp;<a href=\"http://${url}/dyapi/query_log?uid=${uid}&currentpage={{ totalpage }}\" >尾页</a>`;
+    }else{
+        tempStr += "&nbsp;&nbsp;&nbsp;下一页>";
+        tempStr += "&nbsp;&nbsp;&nbsp;尾页";
+    }
+    document.getElementById("barcon").innerHTML = tempStr;
+}
+</script>
+<body onLoad="goPage();">
+<h2 style="text-align: center;">你好，{{ name }}</h2>
+<p id="luck_user" style="display: none;"></p>
+<table>
+    <thead>
+        <tr>
+            <th>主播</th>
+            <th>礼物</th>
+            <th>获取时间</th>
+        </tr>
+    </thead>
+</table>
+<table id="idData">
+    <tbody>
+    {% for i in x['list'] %}
+        <tr>
+            <td style="width: 300px;"><a href="https://www.douyu.com/{{ i[3] }}" target="_blank">{{ i[5] }}({{ i[3] }})</a></td>
+            {% if i[2] == '飞机' %}
+                <td style="width: 300px;">
+                    <span>
+                        <img src="../static/image/fj.webp" style="vertical-align: middle;"><span style="vertical-align: middle; color: red; font-weight:bold;">{{ i[2] }}</span>
+                    </span>
+                </td>
+            {% endif %}
+            {% if i[2] == '火箭'%}
+                <td style="width: 300px;">
+                    <span>
+                        <img src="../static/image/hj.webp" style="vertical-align: middle;"><span style="vertical-align: middle; color: red; font-weight:bold;">{{ i[2] }}</span>
+                    </span>
+                </td>
+            {% endif %}
+            {% if i[2] == '大气' %}
+                <td style="width: 300px;">
+                    <span>
+                        <img src="../static/image/dq.webp" style="vertical-align: middle;"><span style="vertical-align: middle;">{{ i[2] }}</span>
+                    </span>
+                </td>
+            {% endif %}
+            {% if i[2] == '666' %}
+                <td style="width: 300px;">
+                    <span>
+                        <img src="../static/image/666.webp" style="vertical-align: middle;"><span style="font-size: 18px; vertical-align: middle;">{{ i[2] }}</span>
+                    </span>
+                </td>
+            {% endif %}
+            {% if i[2] == '办卡' %}
+                <td style="width: 300px;">
+                    <span>
+                        <img src="../static/image/bk.webp" style="vertical-align: middle;"><span style="vertical-align: middle;">{{ i[2] }}</span>
+                    </span>
+                </td>
+            {% endif %}
+            <td style="width: 300px;">{{ i[4] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div style="float: right; width: 75%;">
+    <div style="text-align: center">
+        <div id="barcon" style="background-color: rgba(0,0,0,0)"></div>
+    </div>
+</div>
+
+</body>
+</html>
